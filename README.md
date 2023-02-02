@@ -1,5 +1,4 @@
 # CUSTOMIZED-VIRTUAL-FILE-SYSTEM
-CUSTOMIZED VIRTUAL FILE SYSTEM
  
 <div align="center">
     <h1>CUSTOMIZED VIRTUAL FILE SYSTEM</h1>
@@ -93,8 +92,11 @@ System Programming Using C.
 
 #
 
-![](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/VFS.png)
+![](https://github.com/VikasPrograms/CUSTOMIZED-VIRTUAL-FILE-SYSTEM/blob/main/CMD_Output%201.PNG)
 
 #
 
-![](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/VFS2.png)
+![](https://github.com/VikasPrograms/CUSTOMIZED-VIRTUAL-FILE-SYSTEM/blob/main/CMD_Output%202.PNG)
+#
+
+![](https://github.com/VikasPrograms/CUSTOMIZED-VIRTUAL-FILE-SYSTEM/blob/main/CMD_Output%203.PNG)
