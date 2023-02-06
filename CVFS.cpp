@@ -1,15 +1,10 @@
-// CVFC
+
+//========================================================================================
+//  	----------->>>>>>>>>>> Costomised Virtual File System <<<<<<<<<<<<<----------
+//========================================================================================
 
 //---------------------------------------------------------------------------------------
-//
-// --------------------- Costomised Virtual/Dynamic File System --------------------------
-//
-//---------------------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------------------
-//
-//  Header Files
-//
+//    -------------------------->> Headers File <<----------------------------------
 //---------------------------------------------------------------------------------------
 
 
@@ -22,7 +17,7 @@
 
 
 //---------------------------------------------------------------------------------------
-// ----------------------->> Defining The Macros <<----------------------------------
+//  ----------------------->> Defining The Macros <<----------------------------------
 //---------------------------------------------------------------------------------------
 
 #define MAXINODE 50          // Maximum Files To Be Created 50
@@ -31,7 +26,7 @@
 #define READ 1      // File Read means 1
 #define WRITE 2     // File Write means 2      // Read + Write means 3
 
-#define MAXFILESIZE 1024        // File Size - 1024 byte = 1 KB     // Freedom any size you can allocate  --->  512 byte, 1024 byte, 2048 byte
+#define MAXFILESIZE 1024        // File Size - 1024 byte = 1 KB     // Freedom any size you can allocate  --->  512 byte, 1024 byte, 2048 byte extend karu shakato
 
 #define REGULAR 1       // filetype - Regular file
 #define SPECIAL 2       // filetype - .c, .py file
@@ -42,7 +37,7 @@
 
 
 //---------------------------------------------------------------------------------------
-//--------------------->> Creating SUPERBLOCK Structure <<--------------------------
+//  --------------------->> Creating SUPERBLOCK Structure <<--------------------------
 //---------------------------------------------------------------------------------------
 
 typedef struct superblock
@@ -53,7 +48,7 @@ typedef struct superblock
 
 
 //---------------------------------------------------------------------------------------
-//----------------------->> Creating INODE Structure <<----------------------------
+//  ----------------------->> Creating INODE Structure <<----------------------------
 //---------------------------------------------------------------------------------------
 
 typedef struct inode
@@ -68,13 +63,14 @@ typedef struct inode
     int ReferenceCount; 	//  reference count
     int permission;         //  read write permission  ( 1   2   3 )
     struct inode *next;	    //  self referential structure           // 8 Bytes  pointer
-}INODE, *PINODE, **PPINODE;                                                 // Total : 94 Bytes Memory Allocating for INODE in Harddisk
+}INODE, *PINODE, **PPINODE;      // Total : 94 Bytes Memory Allocating for INODE in Harddisk
 
 
 //---------------------------------------------------------------------------------------
-//--------------------->> Creating FileTable Structure <<--------------------------
+//  --------------------->> Creating FileTable Structure <<--------------------------
 //---------------------------------------------------------------------------------------
-typedef struct filetable        // filetable tayar hoto
+
+typedef struct filetable    // filetable tayar hoto
 {
     int readoffset;    		//  From Where To Read 
     int writeoffset;    	//  From Where To Write      
@@ -84,8 +80,9 @@ typedef struct filetable        // filetable tayar hoto
 }FILETABLE, *PFILETABLE;        // Total : 24 Bytes Memory Allocating for FILETABLE
 
 //---------------------------------------------------------------------------------------
-//----------------------->> Creating UFDT Structure <<-----------------------------
+//  ----------------------->> Creating UFDT Structure <<-----------------------------
 //---------------------------------------------------------------------------------------
+
 typedef struct ufdt
 {
     PFILETABLE ptrfiletable;           //create ufdt structure, // Pointer Which Points To File Table    
@@ -95,7 +92,7 @@ UFDT UFDTArr[50];			    // Create Array Of Structure i.e Array Of Pointer
 SUPERBLOCK SUPERBLOCKobj;		// global variable
 PINODE head = NULL;				// global pointer 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 
 
 
@@ -109,7 +106,6 @@ PINODE head = NULL;				// global pointer
 //	Date			:	28 June 2021
 //
 //---------------------------------------------------------------------------------------
-
 
 void man(char *name)
 {
@@ -153,10 +149,10 @@ void man(char *name)
         printf("Description : Used to remove data from file \n");
         printf("Usage : truncate File_name \n");
     }
-    else if(strcmp(name, "open") == 0)          // open Demo.txt
+    else if(strcmp(name, "open") == 0)          // open Demo.txt 3
     {
         printf("Description : Used to open existing file \n");
-        printf("Usage : open File_name mode \n");
+        printf("Usage : open File_name mode \n");       // mode Read/Write/RW 1/2/3
     }
     else if(strcmp(name, "close") == 0)         // close Demo.txt
     {
@@ -236,7 +232,7 @@ int GetFDFromName(char *name)
 {
     int i = 0;
 
-    while(i < 50)
+    while(i < MAXINODE)
     {
         if(UFDTArr[i].ptrfiletable != NULL)
         {
@@ -248,7 +244,7 @@ int GetFDFromName(char *name)
         i++;
     }
 
-    if(i == 50)
+    if(i == MAXINODE)
     {
         return -1;
     }
@@ -338,7 +334,7 @@ void CreateDILB()       // Disk inode list block        // Inode create karate
         }
         i++;
     }
-    printf("DILB created successfully \n");
+    printf("\n\t-------->>> DISK INODE LIST BLOCK created successfully <<<------\n");
 }
 
 
@@ -360,7 +356,7 @@ void InitialiseSuperBlock()
 
     while(i < MAXINODE)
     {
-        UFDTArr[i].ptrfiletable = NULL;
+        UFDTArr[i].ptrfiletable = NULL;	    // this loop is used to set all the pointers at null
         i++;
     }
 
@@ -381,10 +377,10 @@ void InitialiseSuperBlock()
 //---------------------------------------------------------------------------------------
 
 
-// CreateFile (  Demo.txt        3       )
+// Create     (  Demo.txt        3       )
 int CreateFile(char *name, int permission)
 {
-    int i = 3;      // int i = 3;       means pahile 3 permission reserve ahet
+    int i = 3;      // int i = 3;       means pahile 3 permission reserve ahet (stdin, stdout, error)
 
     PINODE temp = head;
 
@@ -414,7 +410,7 @@ int CreateFile(char *name, int permission)
         temp = temp -> next;
     }
 
-    while(i < 50)
+    while(i < MAXINODE)
     {
         if(UFDTArr[i].ptrfiletable == NULL)
         {
@@ -424,6 +420,11 @@ int CreateFile(char *name, int permission)
     }
 
     UFDTArr[i].ptrfiletable = (PFILETABLE)malloc(sizeof(FILETABLE));        // UFDT Array madhhe file dili
+
+    if(UFDTArr[i].ptrfiletable == NULL)
+    {
+        return -4;
+    }
 
     //---------------------->> This is FileTable Block <<------------------
 
@@ -447,6 +448,8 @@ int CreateFile(char *name, int permission)
     UFDTArr[i].ptrfiletable -> ptrinode -> FileActualSize = 0;
     UFDTArr[i].ptrfiletable -> ptrinode -> permission = permission;
     UFDTArr[i].ptrfiletable -> ptrinode -> Buffer = (char *)malloc(MAXFILESIZE);
+
+    memset(UFDTArr[i].ptrfiletable -> ptrinode -> Buffer, 0, MAXFILESIZE);
     
     //---------------------------------------------------------------------
 
@@ -455,7 +458,7 @@ int CreateFile(char *name, int permission)
 
 //---------------------------------------------------------------------------------------
 //
-//	Function Name	: 	rm_File
+//	Function Name	: 	rm_File (Remove File)
 //	Input			: 	char*
 //	Output			: 	Integer
 //	Description 	: 	Remove Created Files
@@ -464,7 +467,7 @@ int CreateFile(char *name, int permission)
 //
 //---------------------------------------------------------------------------------------
 
-int rm_File(char *name)     // rm_File("Demo.txt")
+int rm_File(char *name)     // rm_File("Demo.txt")  // Remove File Function
 {
     int fd = 0;             // fd = file descriptor
 
@@ -480,7 +483,12 @@ int rm_File(char *name)     // rm_File("Demo.txt")
     if(UFDTArr[fd].ptrfiletable -> ptrinode -> LinkCount = 0)
     {
         UFDTArr[fd].ptrfiletable -> ptrinode -> FileType = 0;
-        // free(UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer)
+        strcpy(UFDTArr[fd].ptrfiletable -> ptrinode -> FileName, " ");
+        UFDTArr[fd].ptrfiletable -> ptrinode -> ReferenceCount = 0;
+        UFDTArr[fd].ptrfiletable -> ptrinode -> permission = 0;
+        UFDTArr[fd].ptrfiletable -> ptrinode -> FileActualSize = 0;
+
+        free(UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer);
         free(UFDTArr[fd].ptrfiletable);
     }
 
@@ -529,6 +537,7 @@ int ReadFile(int fd, char *arr, int isize)
     {
         return -4;
     }
+    
 
     read_size = (UFDTArr[fd].ptrfiletable -> ptrinode -> FileActualSize) - (UFDTArr[fd].ptrfiletable -> readoffset);
     
@@ -542,6 +551,7 @@ int ReadFile(int fd, char *arr, int isize)
         strncpy(arr,(UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer) + (UFDTArr[fd].ptrfiletable -> readoffset), isize);
         (UFDTArr[fd].ptrfiletable -> readoffset) = (UFDTArr[fd].ptrfiletable -> readoffset) + isize;
     }
+
     return isize;
 }
 
@@ -572,10 +582,15 @@ int WriteFile(int fd, char *arr, int isize)     // write Demo.txt
     {
         return -2;
     }
-    
+
     if((UFDTArr[fd].ptrfiletable -> ptrinode -> FileType) != REGULAR)
     {
         return -3;
+    }
+
+    if(((UFDTArr[fd].ptrfiletable -> ptrinode -> FileSize) - (UFDTArr[fd].ptrfiletable -> ptrinode -> FileActualSize)) < isize)
+    {
+        return -4;
     }
     
     strncpy((UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer) + (UFDTArr[fd].ptrfiletable -> writeoffset),arr,isize);
@@ -620,7 +635,7 @@ int OpenFile(char *name, int mode)
         return -3;
     }
 
-    while(i < 50)
+    while(i < MAXINODE)
     {
         if(UFDTArr[i].ptrfiletable == NULL)
         {
@@ -630,6 +645,7 @@ int OpenFile(char *name, int mode)
     }
 
     UFDTArr[i].ptrfiletable = (PFILETABLE)malloc(sizeof(FILETABLE));
+
     if(UFDTArr[i].ptrfiletable == NULL)
     {
         return -1;
@@ -655,6 +671,7 @@ int OpenFile(char *name, int mode)
     (UFDTArr[i].ptrfiletable -> ptrinode -> ReferenceCount)++;
 
     return i;
+
   	printf("File Opened Successfully\n");
 }
 
@@ -674,6 +691,7 @@ void CloseFileByName(int fd)
     UFDTArr[fd].ptrfiletable -> readoffset = 0;
     UFDTArr[fd].ptrfiletable -> writeoffset = 0;
     (UFDTArr[fd].ptrfiletable -> ptrinode -> ReferenceCount)--;
+
 	printf("File Closed Succesfully\n");
 }
 
@@ -707,7 +725,8 @@ int CloseFileByName(char *name)
 
     UFDTArr[i].ptrfiletable -> readoffset = 0;
     UFDTArr[i].ptrfiletable -> writeoffset = 0;
-    (UFDTArr[i].ptrfiletable -> ptrinode -> ReferenceCount)--;
+    (UFDTArr[i].ptrfiletable -> ptrinode -> ReferenceCount)--; // = 0;
+
 	printf("File Closed Succesfully\n");
 
     return 0;
@@ -734,11 +753,12 @@ void CloseAllFile()
         {
             UFDTArr[i].ptrfiletable -> readoffset = 0;
             UFDTArr[i].ptrfiletable -> writeoffset = 0;
-            (UFDTArr[i].ptrfiletable -> ptrinode -> ReferenceCount)--;
+            (UFDTArr[i].ptrfiletable -> ptrinode -> ReferenceCount)--;  // = 0;
             break;
         }
         i++;
     }
+
     printf("All Files Are Closed Successfully\n");
 }
 
@@ -870,6 +890,7 @@ int LseekFile(int fd, int size, int from)
             (UFDTArr[fd].ptrfiletable -> writeoffset) = (UFDTArr[fd].ptrfiletable -> ptrinode -> FileActualSize) + size;
         }
     }
+
     printf("Successfully Changed\n");
 }
 
@@ -1047,10 +1068,11 @@ int truncate_File(char *name)
         return -1;
     }
 
-    memset(UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer, 0, 1024);
+    memset(UFDTArr[fd].ptrfiletable -> ptrinode -> Buffer, 0, MAXFILESIZE);
     UFDTArr[fd].ptrfiletable -> readoffset = 0;
     UFDTArr[fd].ptrfiletable -> writeoffset = 0;
     UFDTArr[fd].ptrfiletable -> ptrinode -> FileActualSize = 0;
+
 	printf("Data Succesfully Removed\n");
 }
 
@@ -1098,18 +1120,19 @@ void backup()
 int main()
 {
     char *ptr = NULL;
-    int ret = 0, fd = 0, count = 0;
-    char command[4][80], str[80], arr[1024];
+    int ret = 0, fd = 0, count = 0;     // Local Variables
+    char command[4][80], str[80], arr[MAXFILESIZE];     // command = 2D Array - 4 * 80 - 320 bytes cha array // str =  // arr = 
 
-    InitialiseSuperBlock();
-    CreateDILB();
+    InitialiseSuperBlock();     // Harddisk cha 2nd block Super Block
+    CreateDILB();       // Harddisk cha 3rd block Disk Inode Lisk Block ha ithe create hoto
 
+    // Shell start
     while(1)
     {
         fflush(stdin);
         strcpy(str, "");
 
-        printf("\nMy VFS : >    ");
+        printf("\nMy Customised VFS Shell : >    ");
 
         fgets(str, 80, stdin);  // scanf("%[^'\n']s", str);
 
@@ -1127,7 +1150,6 @@ int main()
             else if(strcmp(command[0], "closeall") == 0)
             {
                 CloseAllFile();
-                printf("All files closed successfully \n");
                 continue;
             }
             else if(strcmp(command[0], "clear") == 0)
@@ -1140,9 +1162,15 @@ int main()
                 DisplayHelp();
                 continue;       // used Continue next iteration
             }
+            else if(strcmp(command[0], "backup") == 0)
+            {
+                backup();
+                continue;
+            }
             else if(strcmp(command[0], "exit") == 0)
             {
-                printf("Terminating the My Virtual File System \n");
+                printf("\n\tTerminating the My Virtual File System \n");
+                printf("\n------->>> Thank You for Using CVFS Projects <<<--------\n");
                 break;      // shell stop // Deallocate all DS // Loop cha break
             }
             else
@@ -1171,6 +1199,7 @@ int main()
             else if(strcmp(command[0], "fstat") == 0)
             {
                 ret = fstat_file(atoi(command[1]));
+
                 if(ret == -1)
                 {
                     printf("ERROR : Incorrect parameters \n");
@@ -1186,9 +1215,15 @@ int main()
             else if(strcmp(command[0], "close") == 0)
             {
                 ret = CloseFileByName(command[1]);
+
                 if(ret == -1)
                 {
                     printf("ERROR : Incorrect parameters \n");
+                }
+
+                if(ret == -2)
+                {
+                    printf("This File is Already Closed\n");
                 }
 
                 continue;
@@ -1230,6 +1265,7 @@ int main()
 				//fflush(stdin); // empty input buffer
 
                 ret = strlen(arr);
+
                 if(ret == 0)
                 {
                     printf("ERROR : Incorrect parameter \n");
@@ -1250,6 +1286,16 @@ int main()
                 if(ret == -3)
                 {
                     printf("ERROR : It is not regular file \n");
+                }
+
+                if(ret == -4)
+                {
+                    printf("ERROR : There is no Sufficient memory Available\n");
+                }
+
+                if(ret > 0)
+                {
+                    printf("File Successfully : %d bytes Written.......\n", ret);
                 }
             }
             else if(strcmp(command[0], "truncate") == 0)
@@ -1336,7 +1382,7 @@ int main()
                     continue;
                 }
 
-                ptr = (char *)malloc(sizeof(atoi(command[2]))+1);
+                ptr = (char *)malloc(sizeof(atoi(command[2])) + 1);
 
                 if(ptr == NULL)
                 {
@@ -1345,6 +1391,7 @@ int main()
                 }
 
                 ret = ReadFile(fd, ptr, atoi(command[2]));
+
                 if(ret == -1)
                 {
                     printf("ERROR : File not existing \n");
@@ -1388,6 +1435,7 @@ int main()
             if(strcmp(command[0], "lseek") == 0)
             {
                 fd = GetFDFromName(command[1]);
+
                 if(fd == -1)
                 {
                     printf("ERROR : Incorrect Parameter \n");
@@ -1395,9 +1443,15 @@ int main()
                 }
 
                 ret = LseekFile(fd, atoi(command[2]), atoi(command[3]));
+
                 if(ret == -1)
                 {
                     printf("ERROR : Unable to perform lseek \n");
+                }
+
+                if(ret == -2)
+                {
+                    printf("ERROR : File is not opened\n");
                 }
             }
             else
