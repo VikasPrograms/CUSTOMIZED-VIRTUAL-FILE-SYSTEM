@@ -13,11 +13,6 @@
   <sup>Copyright (c) 2021 Vikas Bade</sup>
  </div>
  
-
-<!--censed Under The  [MIT License](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/LICENSE)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/LICENSE)
-[![Drone](https://drone.grafana.net/api/badges/grafana/grafana/status.svg)](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/Virtual_File_System.cpp)-->
-
 ![](https://i.imgur.com/waxVImv.png)
 
 #
