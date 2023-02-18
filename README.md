@@ -11,6 +11,7 @@
     <sup>More Info</sup>
     <br />
   <sup>Copyright (c) 2021 Vikas Bade</sup>
+ </div>
  
 
 <!--censed Under The  [MIT License](https://github.com/PRASAD-DANGARE/Virtual_File_System/blob/main/LICENSE)
